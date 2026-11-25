@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Convertidor Boost con control digital para sistemas fotovoltaicos — ITM</title>
+<meta name="description" content="Diseño, modelado e implementación de un convertidor DC-DC Boost con regulación digital de tensión del panel. Electrónica de Potencia, ITM 2026-2.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#eef2f5; --card:#ffffff; --ink:#0f2233; --muted:#4d6074; --line:#c9d4de;
+  --blue:#1f4e79; --amber:#c77d00; --amber-bg:#fff3d6; --warn:#a4331f; --grid:#dfe6ec;
+  --head:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{--paper:#0e1a26; --card:#14263a; --ink:#e6eef6; --muted:#9db0c3; --line:#2a4058;
+  --blue:#7fb4e8; --amber:#f2b64a; --amber-bg:#35290f; --warn:#ff9a85; --grid:#162536}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:4.5rem}
+body{margin:0;font:400 1.0625rem/1.65 var(--body);color:var(--ink);background:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:32px 32px}
+a{color:var(--blue)}
+a:focus-visible,button:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 1.25rem}
+header.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding-top:.6rem;padding-bottom:.6rem}
+.brand{font:700 1rem var(--head);text-decoration:none;color:var(--ink)}
+nav a{margin-left:1rem;font-size:.95rem;text-decoration:none;color:var(--muted)}
+nav a:hover{color:var(--ink)}
+.hero{padding:3.5rem 0 2rem}
+.hero p.course{margin:0 0 .75rem;color:var(--muted);font-size:.95rem}
+h1{font:800 clamp(2rem,5.5vw,3.5rem)/1.05 var(--head);letter-spacing:-.02em;margin:0 0 1rem;max-width:18ch}
+.lead{max-width:62ch;font-size:1.15rem;color:var(--muted);margin:0 0 1.5rem}
+.btns a{display:inline-block;margin:0 .6rem .6rem 0;padding:.6rem 1.1rem;border-radius:6px;font-weight:600;text-decoration:none;border:2px solid var(--blue)}
+.btns a.p{background:var(--blue);color:var(--paper)}
+.sim{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1.25rem;max-width:720px}
+.sim label{display:block;font-weight:600;margin:.8rem 0 .2rem}
+.sim input[type=range]{width:100%;accent-color:var(--amber)}
+.sim output.v{font:700 2.2rem var(--head);color:var(--amber);display:block;margin-top:1rem}
+.sim .r{color:var(--muted);font-size:.95rem;min-height:1.6em}
+ol.steps{max-width:72ch;padding-left:1.3rem}ol.steps li{margin:.6rem 0}
+.plot{margin-top:1.5rem;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1rem 1rem .5rem}
+.plot svg{width:100%;height:auto;display:block}
+.plot .ax{stroke:var(--line);stroke-width:1}
+.plot .ss{stroke:var(--amber);stroke-width:1.5;stroke-dasharray:6 5}
+.plot .curve{fill:none;stroke:var(--blue);stroke-width:2.2;stroke-dasharray:1;stroke-dashoffset:0;animation:draw 2.2s ease-out}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion:reduce){.plot .curve{animation:none}}
+.plot text{fill:var(--muted);font:12px var(--mono)}
+.plot figcaption{font-size:.9rem;color:var(--muted);padding:.25rem .25rem .5rem}
+.reads{display:flex;flex-wrap:wrap;gap:.75rem 2rem;margin:1rem 0 0;padding:0;list-style:none}
+.reads li{font-family:var(--mono);font-size:.95rem}
+.reads b{display:block;font:700 1.6rem var(--head);color:var(--amber)}
+section{padding:2.75rem 0}
+h2{font:700 clamp(1.5rem,3.4vw,2.1rem)/1.15 var(--head);margin:0 0 1rem;letter-spacing:-.01em}
+h3{font:700 1.15rem var(--head);margin:1.5rem 0 .4rem}
+p{max-width:70ch;margin:.6rem 0}
+.stages{margin:0;padding:0;list-style:none;display:grid;gap:0}
+.stages li{background:var(--card);padding:1rem 1.25rem;border-left:5px solid var(--blue);border-bottom:1px solid var(--line)}
+.stages li:nth-child(even){border-left-color:var(--amber)}
+.stages strong{font-family:var(--head);font-size:1.1rem}
+.stages p{margin:.25rem 0 0}
+.eq{font-family:var(--mono);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.9rem 1.1rem;overflow-x:auto;font-size:.95rem;margin:.8rem 0}
+.tw{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.97rem}
+th,td{text-align:left;padding:.6rem .9rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;background:color-mix(in srgb,var(--blue) 10%,var(--card))}
+tr:last-child td{border-bottom:0}
+.note{background:var(--amber-bg);border-left:5px solid var(--amber);padding:.8rem 1.1rem;border-radius:0 8px 8px 0;max-width:75ch}
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1rem}
+.gallery figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.gallery img{display:block;width:100%;height:auto}
+.gallery figcaption{padding:.6rem .9rem;font-size:.92rem;color:var(--muted)}
+ul.plain{max-width:70ch;padding-left:1.2rem}
+.team{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem}
+.team div{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:1rem 1.2rem}
+.team b{font-family:var(--head);font-size:1.1rem;display:block}
+.team span{color:var(--muted);font-size:.95rem}
+footer{border-top:1px solid var(--line);padding:1.5rem 0 2.5rem;color:var(--muted);font-size:.92rem;background:var(--paper)}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="#top">Boost fotovoltaico · ITM</a>
+  <nav aria-label="Secciones">
+    <a href="#descripcion">Descripción</a><a href="#etapas">Etapas</a><a href="#modelo">Modelo y control</a><a href="#specs">Especificaciones</a><a href="#resultados">Resultados</a><a href="#pcb">PCB</a><a href="#montaje">Montaje</a><a href="#equipo">Equipo</a>
+  </nav>
+</div></header>
+
+<main id="top">
+<div class="wrap hero">
+  <p class="course">Electrónica de Potencia (EPW103-1) · Ingeniería Electrónica · ITM Medellín · 2026-2</p>
+  <h1>Convertidor DC-DC Boost con regulación digital de tensión</h1>
+  <p class="lead">Un Boost de 6 V a 12 V alimentado por un panel fotovoltaico y controlado con un Arduino UNO. Modelamos el sistema, construimos la placa y regulamos el voltaje del panel en lazo cerrado.</p>
+  <div class="btns"><a class="p" href="#resultados">Ver resultados</a><a href="https://github.com/TU_USUARIO/TU_REPOSITORIO">Repositorio en GitHub</a></div>
+
+  <figure class="plot" style="margin-left:0;margin-right:0">
+    <svg id="step" viewBox="0 0 720 290" role="img" aria-label="Respuesta al escalón de la función de transferencia Gvd, con oscilación poco amortiguada que se estabiliza en menos 12 voltios por unidad de ciclo de trabajo"></svg>
+    <figcaption>Respuesta al escalón del voltaje del panel frente al ciclo de trabajo, calculada a partir de G<sub>vd</sub>(s) del modelo. La línea punteada marca la ganancia estática de −12 V.</figcaption>
+  </figure>
+  <ul class="reads">
+    <li><b>−12 V</b>ganancia estática por unidad de D</li>
+    <li><b>4.04 kHz</b>frecuencia natural (C<sub>pv</sub>–L)</li>
+    <li><b>0.056</b>factor de amortiguamiento</li>
+    <li><b>12.19 V</b>salida medida (objetivo 12 V)</li>
+  </ul>
+</div>
+
+<section id="simulador"><div class="wrap">
+  <h2>Pruebe la ganancia ideal del Boost</h2>
+  <div class="sim">
+    <label for="vin">Voltaje de entrada (panel): <span id="vinT">6.0</span> V</label>
+    <input id="vin" type="range" min="2" max="8" step="0.1" value="6">
+    <label for="dd">Ciclo de trabajo D: <span id="ddT">0.50</span></label>
+    <input id="dd" type="range" min="0.05" max="0.95" step="0.01" value="0.5">
+    <output class="v" id="vo" for="vin dd" aria-live="polite">12.0 V</output>
+    <div class="r" id="vnote">Con D = 0.5 el prototipo duplica el voltaje.</div>
+  </div>
+  <p>La relación ideal es V<sub>o</sub> = V<sub>in</sub> / (1 − D). Es ideal porque no incluye pérdidas en el inductor, el MOSFET ni los diodos. Cerca de D = 1 esas pérdidas dominan, y por eso el controlador limita D entre 3.9 % y 87.9 %.</p>
+</div></section>
+
+<section id="descripcion"><div class="wrap">
+  <h2>Qué problema abordamos</h2>
+  <p>Un panel fotovoltaico no entrega siempre la misma tensión: cambia con la irradiancia y la temperatura. Para alimentar una carga a 12 V, el convertidor Boost compensa esa diferencia ajustando su ciclo de trabajo. Si el panel cae mucho, el Boost tiene que trabajar con ciclos cercanos a 1 y su eficiencia se desploma.</p>
+  <p>Este trabajo es la primera fase de un proyecto de grado: un reconfigurador dinámico de celdas que alterne entre serie y paralelo para evitar esos ciclos extremos. Aquí construimos la base: modelo matemático de la etapa de potencia, placa funcional y control digital del voltaje del panel.</p>
+  <p>La placa se desarrolló a partir de un diseño del profesor Juan Pablo Villegas. El control actúa sobre el voltaje de entrada, no el de salida, porque el convertidor debe operar cerca del punto de máxima potencia del panel.</p>
+  <h3>Objetivo general</h3>
+  <p>Analizar y modelar el comportamiento dinámico de un sistema fotovoltaico acoplado a un Boost, para sentar las bases del reconfigurador de celdas.</p>
+</div></section>
+
+<section id="etapas"><div class="wrap">
+  <h2>Cómo está organizado el sistema</h2>
+  <ul class="stages">
+    <li><strong>Generación fotovoltaica.</strong><p>Panel de ≈ 6 V y 0.6 A en el punto de máxima potencia. Se modeló como una fuente de 0.68 A en paralelo con 75 Ω y, en las pruebas, se emuló como fuente de corriente.</p></li>
+    <li><strong>Etapa de potencia.</strong><p>Inductor de 330 µH, MOSFET IRF1404, capacitor de entrada de 4.7 µF (MKP) y de salida de 47 µF, con carga de 40 Ω a 12 V.</p></li>
+    <li><strong>Sensado.</strong><p>Un divisor resistivo de relación 1.212 lleva el voltaje del panel al rango de 5 V del ADC. Resolución aproximada de 5.9 mV, con 10 lecturas promediadas por muestra.</p></li>
+    <li><strong>Disparo de compuertas.</strong><p>El driver IR2110 maneja el MOSFET con una red bootstrap. Antes de tener el control digital se probó con un generador de señales a 31.25 kHz y 50 % de ciclo.</p></li>
+    <li><strong>Control.</strong><p>El Arduino UNO ejecuta un PID discreto sobre el voltaje del panel y ajusta el PWM del Timer1.</p></li>
+    <li><strong>Protección por hardware.</strong><p>Un LM555 con los pulsadores PULL_ON y PULL_OFF actúa sobre la entrada SD del IR2110. Apaga el convertidor sin depender del software.</p></li>
+  </ul>
+  <figure class="gallery" style="margin:1.25rem 0 0;display:block">
+    <figure style="margin:0;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden">
+      <img src="img/diagrama-bloques.png" alt="Diagrama de bloques: panel, inductor, MOSFET, capacitores, divisor, ADC, PID, PWM, IR2110 y LM555" onerror="this.parentNode.style.display='none'">
+      <figcaption style="padding:.6rem .9rem;font-size:.92rem;color:var(--muted)">Diagrama de bloques del sistema implementado.</figcaption>
+    </figure>
+  </figure>
+</div></section>
+
+<section id="modelo"><div class="wrap">
+  <h2>Modelo y control</h2>
+  <h3>Modelo promediado</h3>
+  <p>Seguimos el modelo promediado en espacio de estados de Erickson y Maksimović (2020). Los estados son el voltaje del panel v<sub>p</sub> y la corriente del inductor i<sub>L</sub>; las entradas son el ciclo de trabajo d y el voltaje de entrada. El voltaje de salida se tomó constante en 12 V. Al linealizar en D = 0.5, i<sub>L</sub> = 0.6 A y v<sub>p</sub> = 6 V con el método Jacobiano se obtiene:</p>
+  <div class="eq">dv<sub>p</sub>/dt = (0.68 − v<sub>p</sub>/75 − i<sub>L</sub>) / C<sub>pv</sub><br>di<sub>L</sub>/dt = (v<sub>p</sub> − v<sub>C</sub>(1 − d)) / L<br>d = 1 − 6 V / 12 V = 0.5</div>
+  <p>De ahí sale la función de transferencia entre el voltaje del panel y el ciclo de trabajo:</p>
+  <div class="eq">G<sub>vd</sub>(s) = −7.737×10⁹ / (s² + 2837 s + 6.447×10⁸)</div>
+  <p>Es un par de polos complejos muy poco amortiguados, producto de la interacción entre C<sub>pv</sub> y L. Si el controlador fuera rápido, esa resonancia sería su principal problema.</p>
+  <h3>Controlador en el Arduino UNO</h3>
+  <ul class="plain">
+    <li>Timer1 en Fast PWM con TOP = 511 y sin prescaler: 16 MHz / 512 = 31.25 kHz y 9 bits de resolución.</li>
+    <li>PID discreto incremental, con integral trapezoidal y derivada por diferencias hacia atrás.</li>
+    <li>Salida saturada entre 20 y 450 cuentas, aplicada como OCR1A = 470 − d. El ciclo queda entre 3.9 % y 87.9 %, sin llegar a valores extremos.</li>
+    <li>Como se realimenta el valor saturado, el esquema tiene anti-windup implícito.</li>
+  </ul>
+</div></section>
+
+<section id="specs"><div class="wrap">
+  <h2>Especificaciones y componentes</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Elemento</th><th>Valor o modelo</th><th>Para qué sirve</th></tr></thead>
+    <tbody>
+      <tr><td>Voltaje de entrada / salida</td><td>≈ 6 V / 12 V</td><td>Punto de diseño del convertidor</td></tr>
+      <tr><td>Frecuencia de conmutación</td><td>31.25 kHz</td><td>Frecuencia del PWM del Timer1</td></tr>
+      <tr><td>Ciclo de trabajo de diseño</td><td>0.5</td><td>Relación 6 V → 12 V</td></tr>
+      <tr><td>Inductor</td><td>330 µH (toroidal)</td><td>Almacena y transfiere la energía</td></tr>
+      <tr><td>Capacitores</td><td>C<sub>pv</sub> = 4.7 µF, C<sub>o</sub> = 47 µF</td><td>Filtran entrada y salida</td></tr>
+      <tr><td>Carga</td><td>40 Ω</td><td>12 V sobre 40 Ω ≈ 3.6 W</td></tr>
+      <tr><td>MOSFET</td><td>IRF1404 (40 V, R<sub>DS(on)</sub> = 4 mΩ)</td><td>Conmutación con pocas pérdidas</td></tr>
+      <tr><td>Driver</td><td>IR2110</td><td>Maneja las compuertas con bootstrap</td></tr>
+      <tr><td>Microcontrolador</td><td>Arduino UNO (ATmega328P, 16 MHz)</td><td>PWM, ADC de 10 bits y PID</td></tr>
+      <tr><td>Control</td><td>PID discreto incremental, muestreo de 2 ms (500 Hz)</td><td>Regula el voltaje del panel</td></tr>
+      <tr><td>Rango de ciclo de trabajo</td><td>≈ 3.9 % a 87.9 % (OCR1A = 470 − d, d entre 20 y 450)</td><td>Evita ciclos extremos</td></tr>
+      <tr><td>Protección</td><td>LM555 + pulsadores</td><td>Apagado independiente del software</td></tr>
+      <tr><td>Reguladores auxiliares</td><td>7815 y 7805</td><td>Rieles de +15 V y +5 V</td></tr>
+      <tr><td>Diseño y simulación</td><td>Autodesk EAGLE, MATLAB (sisotool)</td><td>PCB, modelo y sintonía</td></tr>
+      <tr><td>Costo de materiales</td><td>50.000 COP</td><td>Accesible para uso académico</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="resultados"><div class="wrap">
+  <h2>Resultados</h2>
+  <p>Probamos en lazo cerrado con carga de 40 Ω y el controlador regulando el voltaje del panel en 4.4 V.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Parámetro</th><th>Teórico</th><th>Medido</th></tr></thead>
+    <tbody>
+      <tr><td>Frecuencia PWM</td><td>31 250 Hz</td><td>30 346 Hz</td></tr>
+      <tr><td>Ciclo de trabajo en estado estacionario</td><td>0.5</td><td>0.56</td></tr>
+      <tr><td>Voltaje del panel (referencia 4.4 V)</td><td>4.4 V</td><td>4.8 V (error de 9.1 %)</td></tr>
+      <tr><td>Voltaje de salida</td><td>12 V</td><td>12.19 V</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Qué aprendimos</h3>
+  <p>El convertidor eleva y mantiene la salida cerca de 12 V, y el control digital regula el panel. Pero la sintonía final salió de ajustes experimentales y no cumple el criterio de diseño inicial (ζ = 0.7071 y 1 ms de establecimiento).</p>
+  <p>Con K<sub>i</sub> = 62.3 y una ganancia de planta de ≈ 0.023 V por cuenta, el integrador cruza en ≈ 1.5 rad/s (≈ 0.23 Hz). Los términos proporcional y derivativo son despreciables, así que el controlador se comporta como un integrador puro con un establecimiento del orden de 3 s. Para un voltaje de panel que varía despacio con la irradiancia es aceptable, pero no es lo que se diseñó.</p>
+  <p>El periodo de muestreo tuvo que subir de 500 µs a 2 ms (500 Hz). Como el lazo es tan lento, la resonancia de 4 kHz queda muy por encima de su ancho de banda y no se excita. Eso explica por qué el montaje es estable.</p>
+  <div class="note"><b>Limitaciones.</b> El modelo es de pequeña señal y se linealizó en 6 V, pero las pruebas se hicieron en 4.4 V. No se probó sombreado parcial ni cambios de carga, no se caracterizaron las curvas I-V y P-V, y la lógica de reconfiguración serie/paralelo queda como trabajo futuro.</div>
+</div></section>
+
+<section id="pcb"><div class="wrap">
+  <h2>Placa de circuito impreso</h2>
+  <p>La placa se diseñó en Autodesk EAGLE con pistas anchas para las corrientes de potencia y masas de potencia y señal separadas.</p>
+  <div class="gallery">
+    <figure><img src="img/esquematico.png" alt="Esquemático del convertidor Boost en EAGLE" onerror="this.parentNode.style.display='none'"><figcaption>Esquemático: potencia, acondicionamiento de señal y control.</figcaption></figure>
+    <figure><img src="img/pcb-layout.png" alt="Layout de la placa de circuito impreso" onerror="this.parentNode.style.display='none'"><figcaption>Layout de la PCB.</figcaption></figure>
+    <figure><img src="img/render-3d.png" alt="Renderizado 3D de la placa ensamblada" onerror="this.parentNode.style.display='none'"><figcaption>Modelo 3D del prototipo.</figcaption></figure>
+    <figure><img src="img/prototipo.jpg" alt="Fotografía del prototipo ensamblado" onerror="this.parentNode.style.display='none'"><figcaption>Prototipo ensamblado.</figcaption></figure>
+  </div>
+  </div></section>
+
+<section id="montaje"><div class="wrap">
+  <h2>Guía de montaje y pruebas</h2>
+  <ol class="steps">
+    <li><b>Etapa de instrumentación.</b> Suelde los reguladores 7815 y 7805 y compruebe +15 V y +5 V con sus LED indicadores.</li>
+    <li><b>Lógica de protección.</b> Monte el LM555 con los pulsadores PULL_ON y PULL_OFF y verifique que el pin SD del IR2110 responde.</li>
+    <li><b>Disparo.</b> Monte el IR2110 y su red bootstrap. Pruebe con un generador de señales: PWM de 31.25 kHz, 50 % de ciclo y offset de 2.5 V.</li>
+    <li><b>Potencia.</b> Monte el inductor toroidal, los MOSFET y los capacitores. Respete la polaridad del capacitor de salida.</li>
+    <li><b>Sensado y control.</b> Conecte el divisor resistivo a A0 y cargue el programa en el Arduino UNO.</li>
+  </ol>
+  <h3>Lista de verificación antes de energizar</h3>
+  <ul class="plain">
+    <li>No hay cortos entre GND y VCC (multímetro en continuidad).</li>
+    <li>Se energiza primero la lógica (+15 V y +5 V) y después la potencia.</li>
+    <li>No hay PWM presente antes de conectar el panel.</li>
+    <li>La corriente está limitada a 0.2 A en las primeras pruebas.</li>
+    <li>PULL_OFF queda a la mano como corte de emergencia.</li>
+  </ul>
+  <h3>Ética y ambiente</h3>
+  <p>El prototipo trabaja a tensiones extra bajas, pero conmuta a 31.25 kHz y el MOSFET y los reguladores lineales se calientan. Una versión comercial tendría que cumplir normas como IEC 62109-1 y RETIE; el prototipo no está certificado y no se midió emisión electromagnética. Los reguladores 7815 y 7805 disipan mucha energía como calor, así que una versión futura debería usar reguladores conmutados. Al final de su vida útil, los residuos electrónicos deben ir a gestores autorizados (Ley 1672 de 2013).</p>
+</div></section>
+
+<section id="equipo"><div class="wrap">
+  <h2>Equipo</h2>
+  <div class="team">
+    <div><b>Anderson Cardona Escudero</b><span>Líder. Modelado matemático, simulación, diseño del compensador y pruebas.</span></div>
+    <div><b>Alejandro Henao Correa</b><span>Desarrollador técnico. Definición del problema, dimensionamiento y selección de componentes.</span></div>
+    <div><b>Juan Pablo Villegas Ceballos</b><span>Docente de Electrónica de Potencia.</span></div>
+  </div>
+  <h3>Referencias</h3>
+  <ul class="plain">
+    <li>Erickson, R. W., &amp; Maksimović, D. (2020). <i>Fundamentals of power electronics</i> (3rd ed.). Springer. <a href="https://doi.org/10.1007/978-3-030-43881-4">doi.org/10.1007/978-3-030-43881-4</a></li>
+    <li>De Soto, W., Klein, S. A., &amp; Beckman, W. A. (2006). Improvement and validation of a model for photovoltaic array performance. <i>Solar Energy, 80</i>(1), 78–88. <a href="https://doi.org/10.1016/j.solener.2005.06.010">doi.org/10.1016/j.solener.2005.06.010</a></li>
+    <li>Bai, J., Cao, Y., Hao, Y., Zhang, Z., Liu, S., &amp; Cao, F. (2015). Characteristic output of PV systems under partial shading or mismatch conditions. <i>Solar Energy, 112</i>, 41–54. <a href="https://doi.org/10.1016/j.solener.2014.09.048">doi.org/10.1016/j.solener.2014.09.048</a></li>
+  </ul>
+</div></section>
+</main>
+
+<footer><div class="wrap">Institución Universitaria ITM, Medellín, Colombia. Electrónica de Potencia, semestre 2026-2.</div></footer>
+
+<script>
+(function(){
+  var K=-7.737e9/6.447e8, wn=Math.sqrt(6.447e8), s=2837/2, wd=Math.sqrt(wn*wn-s*s);
+  var T=4e-3, N=500, L=56, R=706, top=18, bot=262, ymin=-25;
+  function X(t){return L+(R-L)*t/T}
+  function Y(v){return top+(bot-top)*(-v)/(-ymin)}
+  var d="";
+  for(var i=0;i<=N;i++){
+    var t=T*i/N, y=K*(1-Math.exp(-s*t)*(Math.cos(wd*t)+(s/wd)*Math.sin(wd*t)));
+    d+=(i?"L":"M")+X(t).toFixed(1)+" "+Y(y).toFixed(1);
+  }
+  var h='<line class="ax" x1="'+L+'" y1="'+top+'" x2="'+L+'" y2="'+bot+'"/><line class="ax" x1="'+L+'" y1="'+bot+'" x2="'+R+'" y2="'+bot+'"/>';
+  [0,-5,-10,-15,-20,-25].forEach(function(v){h+='<line class="ax" x1="'+L+'" x2="'+R+'" y1="'+Y(v)+'" y2="'+Y(v)+'" opacity=".35"/><text x="'+(L-8)+'" y="'+(Y(v)+4)+'" text-anchor="end">'+v+'</text>'});
+  [0,1,2,3,4].forEach(function(m){h+='<text x="'+X(m*1e-3)+'" y="'+(bot+18)+'" text-anchor="middle">'+m+'</text>'});
+  h+='<line class="ss" x1="'+L+'" x2="'+R+'" y1="'+Y(K)+'" y2="'+Y(K)+'"/>';
+  h+='<text x="'+R+'" y="'+(Y(K)-8)+'" text-anchor="end">−12 V</text>';
+  h+='<text x="'+((L+R)/2)+'" y="'+(bot+36)+'" text-anchor="middle">tiempo (ms)</text>';
+  h+='<path class="curve" pathLength="1" d="'+d+'"/>';
+  document.getElementById("step").innerHTML=h;
+})();
+(function(){
+  var v=document.getElementById("vin"),d=document.getElementById("dd");
+  function u(){
+    var vi=+v.value,D=+d.value,vo=vi/(1-D);
+    document.getElementById("vinT").textContent=vi.toFixed(1);
+    document.getElementById("ddT").textContent=D.toFixed(2);
+    document.getElementById("vo").textContent=vo.toFixed(1)+" V";
+    document.getElementById("vnote").textContent=D>0.879?"D supera el 87.9 % que permite el controlador; en la práctica las pérdidas lo harían inviable.":(Math.abs(D-0.5)<0.005?"Con D = 0.5 el prototipo duplica el voltaje.":"Ganancia ideal: "+(1/(1-D)).toFixed(2)+" veces el voltaje de entrada.");
+  }
+  v.addEventListener("input",u);d.addEventListener("input",u);u();
+})();
+</script>
+</body>
+</html>
