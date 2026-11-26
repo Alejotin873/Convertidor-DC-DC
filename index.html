@@ -84,6 +84,13 @@ ul.plain{max-width:70ch;padding-left:1.2rem}
 .team b{font-family:var(--head);font-size:1.1rem;display:block}
 .team span{color:var(--muted);font-size:.95rem}
 footer{border-top:1px solid var(--line);padding:1.5rem 0 2.5rem;color:var(--muted);font-size:.92rem;background:var(--paper)}
+*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+@media print{
+  header.top{position:static;backdrop-filter:none}
+  figure,.tw,.stages li,.sim,.note,.eq,.team div{break-inside:avoid}
+  h2,h3{break-after:avoid}
+  .plot .curve{animation:none}
+}
 </style>
 </head>
 <body>
