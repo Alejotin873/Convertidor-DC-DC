@@ -30,6 +30,7 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--amber);outline-offs
 .wrap{max-width:1040px;margin:0 auto;padding:0 1.25rem}
 header.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
 header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding-top:.6rem;padding-bottom:.6rem}
+.id{display:flex;flex-direction:column;line-height:1.25}.by{font-size:.78rem;color:var(--muted)}
 .brand{font:700 1rem var(--head);text-decoration:none;color:var(--ink)}
 nav a{margin-left:1rem;font-size:.95rem;text-decoration:none;color:var(--muted)}
 nav a:hover{color:var(--ink)}
@@ -87,7 +88,7 @@ footer{border-top:1px solid var(--line);padding:1.5rem 0 2.5rem;color:var(--mute
 </head>
 <body>
 <header class="top"><div class="wrap">
-  <a class="brand" href="#top">Boost fotovoltaico · ITM</a>
+  <div class="id"><a class="brand" href="#top">Boost fotovoltaico · ITM</a><span class="by">Alejandro Henao Correa</span></div>
   <nav aria-label="Secciones">
     <a href="#descripcion">Descripción</a><a href="#etapas">Etapas</a><a href="#modelo">Modelo y control</a><a href="#specs">Especificaciones</a><a href="#resultados">Resultados</a><a href="#pcb">PCB</a><a href="#montaje">Montaje</a><a href="#equipo">Equipo</a>
   </nav>
