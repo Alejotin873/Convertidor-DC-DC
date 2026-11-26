@@ -126,7 +126,7 @@ footer{border-top:1px solid var(--line);padding:1.5rem 0 2.5rem;color:var(--mute
 </div></section>
 
 <section id="descripcion"><div class="wrap">
-  <h2>Qué problema abordamos</h2>
+  <h2>¿Qué problema abordamos?</h2>
   <p>Un panel fotovoltaico no entrega siempre la misma tensión: cambia con la irradiancia y la temperatura. Para alimentar una carga a 12 V, el convertidor Boost compensa esa diferencia ajustando su ciclo de trabajo. Si el panel cae mucho, el Boost tiene que trabajar con ciclos cercanos a 1 y su eficiencia se desploma.</p>
   <p>Este trabajo es la primera fase de un proyecto de grado: un reconfigurador dinámico de celdas que alterne entre serie y paralelo para evitar esos ciclos extremos. Aquí construimos la base: modelo matemático de la etapa de potencia, placa funcional y control digital del voltaje del panel.</p>
   <p>La placa se desarrolló a partir de un diseño del profesor Juan Pablo Villegas. El control actúa sobre el voltaje de entrada, no el de salida, porque el convertidor debe operar cerca del punto de máxima potencia del panel.</p>
@@ -135,7 +135,7 @@ footer{border-top:1px solid var(--line);padding:1.5rem 0 2.5rem;color:var(--mute
 </div></section>
 
 <section id="etapas"><div class="wrap">
-  <h2>Cómo está organizado el sistema</h2>
+  <h2>¿Cómo está organizado el sistema?</h2>
   <ul class="stages">
     <li><strong>Generación fotovoltaica.</strong><p>Panel de ≈ 6 V y 0.6 A en el punto de máxima potencia. Se modeló como una fuente de 0.68 A en paralelo con 75 Ω y, en las pruebas, se emuló como fuente de corriente.</p></li>
     <li><strong>Etapa de potencia.</strong><p>Inductor de 330 µH, MOSFET IRF1404, capacitor de entrada de 4.7 µF (MKP) y de salida de 47 µF, con carga de 40 Ω a 12 V.</p></li>
@@ -187,7 +187,7 @@ footer{border-top:1px solid var(--line);padding:1.5rem 0 2.5rem;color:var(--mute
       <tr><td>Rango de ciclo de trabajo</td><td>≈ 3.9 % a 87.9 % (OCR1A = 470 − d, d entre 20 y 450)</td><td>Evita ciclos extremos</td></tr>
       <tr><td>Protección</td><td>LM555 + pulsadores</td><td>Apagado independiente del software</td></tr>
       <tr><td>Reguladores auxiliares</td><td>7815 y 7805</td><td>Rieles de +15 V y +5 V</td></tr>
-      <tr><td>Diseño y simulación</td><td>Autodesk EAGLE, MATLAB (sisotool)</td><td>PCB, modelo y sintonía</td></tr>
+      <tr><td>Diseño y simulación</td><td>Autodesk EAGLE, PSIM, MATLAB (sisotool)</td><td>PCB, modelo y sintonía</td></tr>
       <tr><td>Costo de materiales</td><td>50.000 COP</td><td>Accesible para uso académico</td></tr>
     </tbody>
   </table></div>
@@ -241,7 +241,7 @@ footer{border-top:1px solid var(--line);padding:1.5rem 0 2.5rem;color:var(--mute
     <li>PULL_OFF queda a la mano como corte de emergencia.</li>
   </ul>
   <h3>Ética y ambiente</h3>
-  <p>El prototipo trabaja a tensiones extra bajas, pero conmuta a 31.25 kHz y el MOSFET y los reguladores lineales se calientan. Una versión comercial tendría que cumplir normas como IEC 62109-1 y RETIE; el prototipo no está certificado y no se midió emisión electromagnética. Los reguladores 7815 y 7805 disipan mucha energía como calor, así que una versión futura debería usar reguladores conmutados. Al final de su vida útil, los residuos electrónicos deben ir a gestores autorizados (Ley 1672 de 2013).</p>
+  <p>El prototipo trabaja a tensiones extra bajas, pero conmuta a 31.25 kHz y el MOSFET y los reguladores lineales se calientan. Una versión comercial tendría que cumplir normas como IEC 62109-1 y RETIE; el prototipo no está certificado y no se midió emisión electromagnética. Los reguladores 7815 y 7805 disipan mucha energía en forma de calor, así que una versión futura debería usar reguladores conmutados. Al final de su vida útil, los residuos electrónicos deben ir a gestores autorizados (Ley 1672 de 2013).</p>
 </div></section>
 
 <section id="equipo"><div class="wrap">
